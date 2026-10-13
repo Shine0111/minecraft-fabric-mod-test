@@ -6,11 +6,11 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.client.KeyMapping;
 import com.mojang.blaze3d.platform.InputConstants;
-import net.minecraft.network.chat.Component;
 
 public class AnachTestMod1Client implements ClientModInitializer {
 
 	private static KeyMapping superJumpKey;
+	private static final double SUPER_JUMP_STRENGTH = 1.5;
 
 	@Override
 	public void onInitializeClient() {
@@ -36,13 +36,13 @@ public class AnachTestMod1Client implements ClientModInitializer {
 				if (Player == null) {
 					return;
 				}
-
-				Player.sendSystemMessage(
-						Component.literal("Super Jump key detected!"));
+				if (!Player.onGround()) {
+					continue;
+				}
 
 				var velocity = Player.getDeltaMovement();
 
-				Player.setDeltaMovement(velocity.x, 1.5, velocity.z);
+				Player.setDeltaMovement(velocity.x, SUPER_JUMP_STRENGTH, velocity.z);
 			}
 		});
 	}
