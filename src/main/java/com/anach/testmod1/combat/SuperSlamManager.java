@@ -36,6 +36,7 @@ public class SuperSlamManager {
         int cooldownTicks = 0;
         boolean hasBeenAirborne = false;
         boolean slamFallProtection = false;
+        boolean fallSoundPlayed = false;
     }
 
     public static void initialize() {
@@ -67,6 +68,7 @@ public class SuperSlamManager {
         data.state = State.AIRBORNE;
         data.hasBeenAirborne = false;
         data.slamFallProtection = true;
+        data.fallSoundPlayed = false;
         player.fallDistance = 0.0F;
 
         player.level().playSound(
@@ -103,6 +105,21 @@ public class SuperSlamManager {
 
                         // Prevent fall damage from accumulating during Super Slam.
                         player.fallDistance = 0.0F;
+
+                        // Play the falling sound once when the player starts descending.
+                        if (player.getDeltaMovement().y < 0 && !data.fallSoundPlayed) {
+                            player.level().playSound(
+                                    null,
+                                    player.getX(),
+                                    player.getY(),
+                                    player.getZ(),
+                                    ModSounds.SUPER_SLAM_FALL,
+                                    SoundSource.PLAYERS,
+                                    1.0F,
+                                    1.0F);
+
+                            data.fallSoundPlayed = true;
+                        }
                     }
 
                     if (data.hasBeenAirborne && player.onGround()) {
@@ -135,6 +152,16 @@ public class SuperSlamManager {
 
     private static void impact(ServerPlayer player, AttackData data) {
         System.out.println("[Super Slam] IMPACT at " + player.blockPosition());
+        // Play the energy blast sound when Super Slam hits the ground.
+        player.level().playSound(
+                null,
+                player.getX(),
+                player.getY(),
+                player.getZ(),
+                ModSounds.SUPER_SLAM_ENERGY,
+                SoundSource.PLAYERS,
+                1.0F,
+                1.0F);
         // Apply a small cost for using Super Slam: half a heart.
         player.hurtServer(
                 (ServerLevel) player.level(),
