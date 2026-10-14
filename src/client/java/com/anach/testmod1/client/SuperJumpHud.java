@@ -6,9 +6,9 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 public class SuperJumpHud {
 
-        private static final int RADIUS = 20;
+        private static final int RADIUS = 12;
         private static final int THICKNESS = 3;
-        private static final int SEGMENTS = 80;
+        private static final int SEGMENTS = 60;
 
         private static final int BACKGROUND_COLOR = 0xAA444444;
         private static final int READY_COLOR = 0xFF35D07F;
@@ -29,9 +29,9 @@ public class SuperJumpHud {
                 int screenWidth = minecraft.getWindow().getGuiScaledWidth();
                 int screenHeight = minecraft.getWindow().getGuiScaledHeight();
 
-                // Position the indicator above the crosshair.
-                int centerX = screenWidth / 2;
-                int centerY = screenHeight / 2 - 35;
+                // Position the indicator bottom left
+                int centerX = 35;
+                int centerY = screenHeight - 45;
 
                 int cooldownTicks = AnachTestMod1Client.getCooldownTicks();
 
@@ -76,13 +76,13 @@ public class SuperJumpHud {
                 }
 
                 // Draw the upward arrow in the center.
-                graphics.text(
-                                minecraft.font,
-                                "↑",
-                                centerX - 4,
-                                centerY - 5,
-                                ARROW_COLOR,
-                                false);
+                // graphics.text(
+                // minecraft.font,
+                // "↑",
+                // centerX - 4,
+                // centerY - 5,
+                // ARROW_COLOR,
+                // false);
         }
 
         private static void drawRing(
