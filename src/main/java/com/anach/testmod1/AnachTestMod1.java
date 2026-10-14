@@ -7,6 +7,9 @@ import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.anach.testmod1.combat.SuperSlamManager;
+import com.anach.testmod1.network.SuperSlamNetworking;
+
 public class AnachTestMod1 implements ModInitializer {
 	public static final String MOD_ID = "anach-test-mod-1";
 
@@ -22,6 +25,8 @@ public class AnachTestMod1 implements ModInitializer {
 		// Proceed with mild caution.
 
 		LOGGER.info("Hello super jump mod world!");
+		SuperSlamNetworking.initialize();
+		SuperSlamManager.initialize();
 	}
 
 	public static Identifier id(String path) {
