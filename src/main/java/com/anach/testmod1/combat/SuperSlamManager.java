@@ -10,6 +10,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import com.anach.testmod1.sound.ModSounds;
+import net.minecraft.sounds.SoundSource;
+
 public class SuperSlamManager {
 
     private static final double LAUNCH_STRENGTH = 1.5;
@@ -65,6 +68,16 @@ public class SuperSlamManager {
         data.hasBeenAirborne = false;
         data.slamFallProtection = true;
         player.fallDistance = 0.0F;
+
+        player.level().playSound(
+                null,
+                player.getX(),
+                player.getY(),
+                player.getZ(),
+                ModSounds.SUPER_SLAM_LAUNCH,
+                SoundSource.PLAYERS,
+                1.0F,
+                1.0F);
 
         System.out.println("[Super Slam] Launch!");
     }

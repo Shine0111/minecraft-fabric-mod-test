@@ -1,0 +1,11 @@
+{
+  "super_slam_launch": {
+    "sounds": ["anach-test-mod-1:super_slam_launch"]
+  },
+  "super_slam_fall": {
+    "sounds": ["anach-test-mod-1:super_slam_fall"]
+  },
+  "super_slam_energy": {
+    "sounds": ["anach-test-mod-1:super_slam_energy"]
+  }
+}
