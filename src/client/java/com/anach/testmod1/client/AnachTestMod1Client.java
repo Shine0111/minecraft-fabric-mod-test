@@ -14,7 +14,6 @@ import com.anach.testmod1.network.StartSuperSlamPayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 
 import com.anach.testmod1.network.SuperSlamCooldownPayload;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 
 public class AnachTestMod1Client implements ClientModInitializer {
 
@@ -25,6 +24,18 @@ public class AnachTestMod1Client implements ClientModInitializer {
 
 	// State
 	static int cooldownTicks = 0;
+
+	// HUD button press animation
+	private static final int PRESS_ANIMATION_DURATION = 8;
+	private static int pressAnimationTicks = 0;
+
+	public static int getPressAnimationTicks() {
+		return pressAnimationTicks;
+	}
+
+	public static int getPressAnimationDuration() {
+		return PRESS_ANIMATION_DURATION;
+	}
 
 	// Getters
 	public static int getCooldownTicks() {
@@ -71,6 +82,9 @@ public class AnachTestMod1Client implements ClientModInitializer {
 			if (cooldownTicks > 0) {
 				cooldownTicks--;
 			}
+			if (pressAnimationTicks > 0) {
+				pressAnimationTicks--;
+			}
 
 			while (superJumpKey.consumeClick()) {
 				if (client.player == null)
@@ -79,6 +93,10 @@ public class AnachTestMod1Client implements ClientModInitializer {
 				if (!ClientPlayNetworking.canSend(StartSuperSlamPayload.TYPE))
 					continue;
 
+				// Trigger the HUD button press animation.
+				pressAnimationTicks = PRESS_ANIMATION_DURATION;
+
+				// Send the ability request to the server.
 				ClientPlayNetworking.send(new StartSuperSlamPayload());
 			}
 		});

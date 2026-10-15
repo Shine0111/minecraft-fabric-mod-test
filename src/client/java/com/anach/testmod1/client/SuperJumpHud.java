@@ -32,6 +32,16 @@ public class SuperJumpHud {
                 // Position the indicator bottom left
                 int centerX = 35;
                 int centerY = screenHeight - 45;
+                // Calculate the button press animation scale.
+                int pressTicks = AnachTestMod1Client.getPressAnimationTicks();
+                int pressDuration = AnachTestMod1Client.getPressAnimationDuration();
+
+                double pressProgress = pressDuration > 0
+                                ? (double) pressTicks / pressDuration
+                                : 0.0;
+
+                // Shrink the ring by up to 18% when pressed.
+                double scale = 1.0 - 0.18 * pressProgress;
 
                 int cooldownTicks = AnachTestMod1Client.getCooldownTicks();
 
@@ -55,7 +65,8 @@ public class SuperJumpHud {
                                 centerX,
                                 centerY,
                                 1.0,
-                                BACKGROUND_COLOR);
+                                BACKGROUND_COLOR,
+                                scale);
 
                 // Draw the cooldown ring.
                 if (cooldownTicks > 0) {
@@ -64,7 +75,8 @@ public class SuperJumpHud {
                                         centerX,
                                         centerY,
                                         progress,
-                                        ringColor);
+                                        ringColor,
+                                        scale);
                 } else {
                         // Show a complete green ring when Super Jump is ready.
                         drawRing(
@@ -72,7 +84,8 @@ public class SuperJumpHud {
                                         centerX,
                                         centerY,
                                         1.0,
-                                        READY_COLOR);
+                                        READY_COLOR,
+                                        scale);
                 }
 
                 // Draw the upward arrow in the center.
@@ -90,8 +103,13 @@ public class SuperJumpHud {
                         int centerX,
                         int centerY,
                         double progress,
-                        int color) {
+                        int color,
+                        double scale) {
+
                 int visibleSegments = (int) Math.ceil(SEGMENTS * progress);
+
+                // Scale the radius to animate the ring.
+                double animatedRadius = RADIUS * scale;
 
                 for (int i = 0; i < visibleSegments; i++) {
 
@@ -100,11 +118,11 @@ public class SuperJumpHud {
 
                         int x = centerX
                                         + (int) Math.round(
-                                                        Math.cos(angle) * RADIUS);
+                                                        Math.cos(angle) * animatedRadius);
 
                         int y = centerY
                                         + (int) Math.round(
-                                                        Math.sin(angle) * RADIUS);
+                                                        Math.sin(angle) * animatedRadius);
 
                         graphics.fill(
                                         x - THICKNESS / 2,
