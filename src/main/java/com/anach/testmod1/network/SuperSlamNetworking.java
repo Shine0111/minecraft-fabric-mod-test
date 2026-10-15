@@ -13,17 +13,21 @@ public final class SuperSlamNetworking {
     }
 
     public static void initialize() {
-        // Register the packet that the client sends to the server.
+        // Client -> Server: request Super Slam activation.
         PayloadTypeRegistry.serverboundPlay().register(
                 StartSuperSlamPayload.TYPE,
                 StartSuperSlamPayload.CODEC);
 
-        // Handle the packet when the server receives it.
+        // Server -> Client: synchronize the cooldown HUD.
+        PayloadTypeRegistry.clientboundPlay().register(
+                SuperSlamCooldownPayload.TYPE,
+                SuperSlamCooldownPayload.CODEC);
+
+        // Handle the activation request on the server.
         ServerPlayNetworking.registerGlobalReceiver(
                 StartSuperSlamPayload.TYPE,
                 (payload, context) -> {
                     var player = context.player();
-
                     SuperSlamManager.start(player);
                 });
 

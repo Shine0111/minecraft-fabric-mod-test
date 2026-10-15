@@ -13,6 +13,9 @@ import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import com.anach.testmod1.network.StartSuperSlamPayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 
+import com.anach.testmod1.network.SuperSlamCooldownPayload;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+
 public class AnachTestMod1Client implements ClientModInitializer {
 
 	private static KeyMapping superJumpKey;
@@ -54,6 +57,15 @@ public class AnachTestMod1Client implements ClientModInitializer {
 						InputConstants.KEY_G,
 						category));
 
+		// Receive cooldown updates from the server.
+		ClientPlayNetworking.registerGlobalReceiver(
+				SuperSlamCooldownPayload.TYPE,
+				(payload, context) -> {
+					context.client().execute(() -> {
+						cooldownTicks = payload.ticks();
+					});
+				});
+
 		// Check for key presses during the game
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			if (cooldownTicks > 0) {
@@ -63,16 +75,11 @@ public class AnachTestMod1Client implements ClientModInitializer {
 			while (superJumpKey.consumeClick()) {
 				if (client.player == null)
 					continue;
-				if (!client.player.onGround())
-					continue;
-				if (cooldownTicks > 0)
-					continue;
+
 				if (!ClientPlayNetworking.canSend(StartSuperSlamPayload.TYPE))
 					continue;
 
 				ClientPlayNetworking.send(new StartSuperSlamPayload());
-
-				cooldownTicks = COOLDOWN_DURATION;
 			}
 		});
 

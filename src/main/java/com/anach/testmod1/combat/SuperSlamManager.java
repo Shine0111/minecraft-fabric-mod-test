@@ -13,6 +13,9 @@ import java.util.UUID;
 import com.anach.testmod1.sound.ModSounds;
 import net.minecraft.sounds.SoundSource;
 
+import com.anach.testmod1.network.SuperSlamCooldownPayload;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+
 public class SuperSlamManager {
 
     private static final double LAUNCH_STRENGTH = 1.5;
@@ -129,9 +132,13 @@ public class SuperSlamManager {
                 }
 
                 case IMPACT -> {
-                    // The impact is processed once, then cooldown begins.
                     data.state = State.COOLDOWN;
                     data.cooldownTicks = COOLDOWN_DURATION;
+
+                    // Tell the client that the cooldown has started.
+                    ServerPlayNetworking.send(
+                            player,
+                            new SuperSlamCooldownPayload(data.cooldownTicks));
                 }
 
                 case COOLDOWN -> {
@@ -140,8 +147,14 @@ public class SuperSlamManager {
                     }
 
                     if (data.cooldownTicks <= 0) {
+                        data.cooldownTicks = 0;
                         data.state = State.READY;
                         data.slamFallProtection = false;
+
+                        // Tell the client that the ability is ready again.
+                        ServerPlayNetworking.send(
+                                player,
+                                new SuperSlamCooldownPayload(0));
 
                         System.out.println("[Super Slam] Ready!");
                     }
