@@ -24,6 +24,7 @@ public class SuperSlamManager {
     private static final double MAX_KNOCKBACK = 3.0;
     private static final double MAX_UPWARD_KNOCKBACK = 0.9;
     private static final int COOLDOWN_DURATION = 60;
+    private static final double DIVE_SPEED = 3.0;
 
     private static final Map<UUID, AttackData> PLAYERS = new HashMap<>();
 
@@ -110,18 +111,28 @@ public class SuperSlamManager {
                         player.fallDistance = 0.0F;
 
                         // Play the falling sound once when the player starts descending.
-                        if (player.getDeltaMovement().y < 0 && !data.fallSoundPlayed) {
-                            player.level().playSound(
-                                    null,
-                                    player.getX(),
-                                    player.getY(),
-                                    player.getZ(),
-                                    ModSounds.SUPER_SLAM_FALL,
-                                    SoundSource.PLAYERS,
-                                    1.0F,
-                                    1.0F);
+                        if (player.getDeltaMovement().y < 0) {
+                            // Accelerate the dive downward.
+                            var velocity = player.getDeltaMovement();
+                            player.setDeltaMovement(
+                                    velocity.x,
+                                    -DIVE_SPEED,
+                                    velocity.z);
+                            player.hurtMarked = true;
 
-                            data.fallSoundPlayed = true;
+                            // Play the falling sound only once.
+                            if (!data.fallSoundPlayed) {
+                                player.level().playSound(
+                                        null,
+                                        player.getX(),
+                                        player.getY(),
+                                        player.getZ(),
+                                        ModSounds.SUPER_SLAM_FALL,
+                                        SoundSource.PLAYERS,
+                                        1.0F,
+                                        1.0F);
+                                data.fallSoundPlayed = true;
+                            }
                         }
                     }
 
