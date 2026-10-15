@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Monster;
 
 import java.util.HashMap;
@@ -19,11 +20,15 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 public class SuperSlamManager {
 
     private static final double LAUNCH_STRENGTH = 1.5;
-    private static final double IMPACT_RADIUS = 5.0;
-    private static final float MAX_DAMAGE = 30.0F;
-    private static final double MAX_KNOCKBACK = 3.0;
-    private static final double MAX_UPWARD_KNOCKBACK = 0.9;
+
+    private static final double IMPACT_RADIUS = 10.0;
+    private static final float MAX_DAMAGE = 50.0F;
+
+    private static final double MAX_KNOCKBACK = 4.5;
+    private static final double MAX_UPWARD_KNOCKBACK = 1.2;
+
     private static final int COOLDOWN_DURATION = 60;
+
     private static final double DIVE_SPEED = 3.0;
 
     private static final Map<UUID, AttackData> PLAYERS = new HashMap<>();
@@ -196,13 +201,13 @@ public class SuperSlamManager {
 
         // Find hostile mobs in a box surrounding the player.
         var nearbyMobs = level.getEntitiesOfClass(
-                Monster.class,
+                LivingEntity.class,
                 player.getBoundingBox().inflate(IMPACT_RADIUS),
-                Monster::isAlive);
+                entity -> entity.isAlive() && entity != player);
 
         int affectedMobs = 0;
 
-        for (Monster mob : nearbyMobs) {
+        for (LivingEntity mob : nearbyMobs) {
             // Calculate the distance between the player and the mob.
             double distance = Math.sqrt(mob.distanceToSqr(player));
 
