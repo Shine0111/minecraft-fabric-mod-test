@@ -9,7 +9,7 @@
     "sources": "https://github.com/Shine0111/minecraft-fabric-mod-test"
   },
   "license": "CC0-1.0",
-  "icon": "assets/anach-test-mod-1/icon.png",
+  "icon": "assets/anach-test-mod-1/super_slam_attack_icon_128.png",
   "environment": "*",
   "entrypoints": {
     "main": ["com.anach.testmod1.AnachTestMod1"],
